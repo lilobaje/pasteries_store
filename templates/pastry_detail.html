@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pastry.name }} - Sweet Treats Bakery{% endblock %}
+
+{% block content %}
+<section class="py-12">
+    <div class="container mx-auto px-4">
+        <!-- Back to Pastries -->
+        <a href="{{ url_for('pastries') }}" class="inline-flex items-center text-pink-600 hover:text-pink-700 mb-6 font-semibold">
+            ← Back to Pastries
+        </a>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 bg-white shadow-md rounded-lg overflow-hidden">
+            <!-- Main Image + Gallery -->
+            <div>
+                <div class="relative">
+                    <img id="mainImage" src="{{ pastry.image_url }}" alt="{{ pastry.name }}" class="w-full h-96 object-cover">
+                    {% if not pastry.available %}
+                    <span class="absolute top-4 right-4 bg-red-500 text-white px-4 py-1 rounded-full text-xs font-semibold">Sold Out</span>
+                    {% else %}
+                    <span class="absolute top-4 right-4 bg-green-500 text-white px-4 py-1 rounded-full text-xs font-semibold">Available</span>
+                    {% endif %}
+                </div>
+
+                {% if pastry.gallery %}
+                <div class="flex flex-wrap gap-3 mt-4 px-4">
+                    {% for img_url in pastry.gallery_urls %}
+                    <img src="{{ img_url }}" 
+                         class="w-20 h-20 object-cover rounded-md cursor-pointer border hover:ring-2 hover:ring-pink-400 transition"
+                         onclick="document.getElementById('mainImage').src='{{ img_url }}'">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Details -->
+            <div class="p-6">
+                <h1 class="text-3xl font-bold mb-3 heading-font">{{ pastry.name }}</h1>
+                <p class="text-gray-500 text-sm mb-2">{{ pastry.category }}</p>
+                {% if pastry.serving_size %}
+                <p class="text-sm text-gray-600 mb-4">{{ pastry.serving_size }}</p>
+                {% endif %}
+
+                <p class="text-gray-700 mb-6">{{ pastry.description }}</p>
+
+                <div class="flex items-center justify-between mb-6">
+                    <p class="text-3xl font-bold text-pink-600">₦{{ "{:,.0f}".format(pastry.price) }}</p>
+                    {% if pastry.available %}
+                    <a href="{{ pastry.whatsapp_link }}" target="_blank"
+                       class="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-lg font-semibold flex items-center gap-2 transition">
+                        💬 Order on WhatsApp
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Ingredients -->
+                {% if pastry.ingredients %}
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold mb-2 heading-font">Ingredients</h2>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        {% for ingredient in pastry.ingredients %}
+                        <li>{{ ingredient }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Allergens -->
+                {% if pastry.allergens %}
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold mb-2 heading-font">Allergens</h2>
+                    <div class="flex flex-wrap gap-2">
+                        {% for allergen in pastry.allergens %}
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">{{ allergen }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Features -->
+                {% if pastry.features %}
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold mb-2 heading-font">Special Features</h2>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        {% for feature in pastry.features %}
+                        <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Related Pastries -->
+        {% if related_pastries %}
+        <div class="mt-16">
+            <h2 class="text-2xl font-bold mb-6 heading-font">You might also like</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for item in related_pastries %}
+                <div class="pastry-card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="relative">
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-48 object-cover">
+                        {% if not item.available %}
+                        <span class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">Sold Out</span>
+                        {% else %}
+                        <span class="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">Available</span>
+                        {% endif %}
+                    </div>
+                    <div class="p-4">
+                        <p class="text-xs text-gray-500 mb-1">{{ item.category }}</p>
+                        <h3 class="text-lg font-bold mb-2 heading-font truncate">{{ item.name }}</h3>
+                        <p class="text-pink-600 font-semibold mb-3">₦{{ "{:,.0f}".format(item.price) }}</p>
+                        <a href="{{ url_for('pastry_detail', pastry_id=item.id) }}"
+                           class="block bg-pink-600 hover:bg-pink-700 text-white text-center py-2 rounded-lg text-sm font-semibold transition">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Pastries - Sweet Treats Bakery{% endblock %}
+
+{% block content %}
+<section class="py-12">
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-bold mb-8 heading-font">
+            {% if category %}{{ category }}{% else %}All Pastries{% endif %}
+        </h1>
+
+        <!-- Filter Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-bold mb-4">Filter by Category</h2>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ url_for('pastries') }}" 
+                   class="px-4 py-2 rounded-lg font-semibold transition {% if not category %}bg-pink-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    All Pastries
+                </a>
+                {% for cat in all_categories %}
+                <a href="{{ url_for('pastries', category=cat) }}" 
+                   class="px-4 py-2 rounded-lg font-semibold transition {% if category == cat %}bg-pink-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    {% if cat == 'Cakes' %}🎂
+                    {% elif cat == 'Cookies' %}🍪
+                    {% elif cat == 'Bread' %}🍞
+                    {% elif cat == 'Donuts' %}🍩
+                    {% else %}🥐
+                    {% endif %}
+                    {{ cat }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pastries Grid -->
+        {% if pastries %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for pastry in pastries %}
+            <div class="pastry-card bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="relative">
+                    <img src="{{ pastry.image_url }}" alt="{{ pastry.name }}" class="w-full h-56 object-cover">
+                    {% if not pastry.available %}
+                    <span class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        Sold Out
+                    </span>
+                    {% else %}
+                    <span class="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        Available
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <p class="text-xs text-gray-500 mb-1">{{ pastry.category }}</p>
+                    <h3 class="text-lg font-bold mb-2 truncate heading-font">{{ pastry.name }}</h3>
+                    <p class="text-gray-600 text-sm mb-2 line-clamp-2">{{ pastry.description }}</p>
+                    {% if pastry.serving_size %}
+                    <p class="text-xs text-gray-500 mb-3">{{ pastry.serving_size }}</p>
+                    {% endif %}
+                    
+                    <!-- Allergen badges -->
+                    {% if pastry.allergens %}
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        {% for allergen in pastry.allergens[:3] %}
+                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">{{ allergen }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="text-xl font-bold text-pink-600">₦{{ "{:,.0f}".format(pastry.price) }}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{{ url_for('pastry_detail', pastry_id=pastry.id) }}" 
+                           class="flex-1 bg-pink-600 hover:bg-pink-700 text-white text-center py-2 rounded-lg text-sm font-semibold transition">
+                            View Details
+                        </a>
+                        {% if pastry.available %}
+                        <a href="{{ pastry.whatsapp_link }}" target="_blank"
+                           class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg font-semibold transition text-sm">
+                            💬
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16">
+            <p class="text-2xl text-gray-500">No pastries found in this category.</p>
+            <a href="{{ url_for('pastries') }}" class="text-pink-600 hover:underline mt-4 inline-block">View all pastries</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

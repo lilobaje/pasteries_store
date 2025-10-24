@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white py-20">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 heading-font">Freshly Baked Every Day</h1>
+            <p class="text-xl md:text-2xl mb-8 text-pink-100">Delicious cakes, pastries, and bread made with love. Order via WhatsApp for quick delivery!</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ url_for('pastries') }}" class="bg-white text-pink-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition">
+                    View All Pastries
+                </a>
+                <a href="https://wa.me/2348012345678?text=Hello!%20I%27d%20like%20to%20order%20some%20pastries" 
+                   class="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-600 transition">
+                    💬 Order on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8 heading-font">Shop by Category</h2>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {% for category in categories %}
+            <a href="{{ url_for('pastries', category=category) }}" 
+               class="bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 hover:border-pink-400 rounded-lg p-6 text-center transition">
+                <div class="text-4xl mb-2">
+                    {% if category == 'Cakes' %}🎂
+                    {% elif category == 'Cookies' %}🍪
+                    {% elif category == 'Bread' %}🍞
+                    {% elif category == 'Donuts' %}🍩
+                    {% else %}🥐
+                    {% endif %}
+                </div>
+                <p class="text-lg font-semibold text-gray-800">{{ category }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Pastries -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 heading-font">Featured Items</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for pastry in featured_pastries %}
+            <div class="pastry-card bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="relative">
+                    <img src="{{ pastry.image_url }}" alt="{{ pastry.name }}" class="w-full h-64 object-cover">
+                    {% if not pastry.available %}
+                    <span class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        Sold Out
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-500 mb-1">{{ pastry.category }}</p>
+                    <h3 class="text-xl font-bold mb-2 heading-font">{{ pastry.name }}</h3>
+                    <p class="text-gray-600 mb-2 text-sm">{{ pastry.description[:80] }}...</p>
+                    {% if pastry.serving_size %}
+                    <p class="text-sm text-gray-500 mb-4">{{ pastry.serving_size }}</p>
+                    {% endif %}
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="text-2xl font-bold text-pink-600">₦{{ "{:,.0f}".format(pastry.price) }}</p>
+                        {% if pastry.available %}
+                        <span class="text-sm text-green-600 font-semibold">Available</span>
+                        {% endif %}
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{{ url_for('pastry_detail', pastry_id=pastry.id) }}" 
+                           class="flex-1 bg-pink-600 hover:bg-pink-700 text-white text-center py-3 rounded-lg font-semibold transition">
+                            View Details
+                        </a>
+                        {% if pastry.available %}
+                        <a href="{{ pastry.whatsapp_link }}" target="_blank"
+                           class="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-semibold transition">
+                            💬
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-12">
+            <a href="{{ url_for('pastries') }}" class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-4 rounded-lg font-semibold inline-block transition">
+                View All Pastries
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-16 bg-gray-100">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 heading-font">Why Choose Sweet Treats?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="text-5xl mb-4">👩‍🍳</div>
+                <h3 class="text-xl font-bold mb-2">Freshly Baked Daily</h3>
+                <p class="text-gray-600">All our pastries are baked fresh every morning using premium ingredients</p>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl mb-4">🎂</div>
+                <h3 class="text-xl font-bold mb-2">Custom Orders</h3>
+                <p class="text-gray-600">We can customize cakes and pastries for your special occasions</p>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl mb-4">🚚</div>
+                <h3 class="text-xl font-bold mb-2">Fast Delivery</h3>
+                <p class="text-gray-600">Same-day delivery available in Jos and surrounding areas</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How to Order -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 heading-font">How to Order</h2>
+        <div class="max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-pink-600">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Browse Our Menu</h3>
+                    <p class="text-gray-600">Explore our delicious selection of cakes, cookies, bread, and more</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-pink-600">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">WhatsApp Your Order</h3>
+                    <p class="text-gray-600">Click the WhatsApp button to place your order and discuss details</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-pink-600">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Enjoy Fresh Pastries</h3>
+                    <p class="text-gray-600">We'll deliver your order fresh or you can pick it up at our bakery</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Special Note -->
+<section class="py-12 bg-pink-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto text-center">
+            <h3 class="text-2xl font-bold mb-4 heading-font">🎉 Special Occasion Orders</h3>
+            <p class="text-gray-700 mb-6">Planning a birthday, wedding, or corporate event? We specialize in custom cakes and large orders. Contact us early to discuss your needs!</p>
+            <a href="{{ url_for('contact') }}" class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-lg font-semibold inline-block transition">
+                Contact Us for Custom Orders
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sweet Treats Bakery - Fresh Pastries Daily{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .heading-font {
+            font-family: 'Playfair Display', serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+        }
+        .pastry-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .pastry-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="{{ url_for('home') }}" class="text-2xl font-bold text-pink-600 heading-font">
+                    🧁 Sweet Treats Bakery
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-6 items-center">
+                    <a href="{{ url_for('home') }}" class="text-gray-700 hover:text-pink-600 font-medium transition">Home</a>
+                    <a href="{{ url_for('pastries') }}" class="text-gray-700 hover:text-pink-600 font-medium transition">Our Pastries</a>
+                    <a href="{{ url_for('about') }}" class="text-gray-700 hover:text-pink-600 font-medium transition">About</a>
+                    <a href="{{ url_for('contact') }}" class="text-gray-700 hover:text-pink-600 font-medium transition">Contact</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <a href="{{ url_for('home') }}" class="block py-2 text-gray-700 hover:text-pink-600">Home</a>
+                <a href="{{ url_for('pastries') }}" class="block py-2 text-gray-700 hover:text-pink-600">Our Pastries</a>
+                <a href="{{ url_for('about') }}" class="block py-2 text-gray-700 hover:text-pink-600">About</a>
+                <a href="{{ url_for('contact') }}" class="block py-2 text-gray-700 hover:text-pink-600">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mx-auto px-4 mt-4">
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-lg text-sm {% if category == 'error' %}bg-red-100 text-red-700{% elif category == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 heading-font">🧁 Sweet Treats Bakery</h3>
+                    <p class="text-gray-400">Freshly baked pastries, cakes, and bread made with love daily.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{{ url_for('pastries') }}" class="hover:text-white transition">Browse Pastries</a></li>
+                        <li><a href="{{ url_for('about') }}" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Categories</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{{ url_for('pastries', category='Cakes') }}" class="hover:text-white transition">Cakes</a></li>
+                        <li><a href="{{ url_for('pastries', category='Cookies') }}" class="hover:text-white transition">Cookies</a></li>
+                        <li><a href="{{ url_for('pastries', category='Bread') }}" class="hover:text-white transition">Bread</a></li>
+                        <li><a href="{{ url_for('pastries', category='Donuts') }}" class="hover:text-white transition">Donuts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>📍 Jos, Plateau State, Nigeria</li>
+                        <li>📧 info@sweettreats.com</li>
+                        <li>📞 +234 801 234 5678</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Sweet Treats Bakery. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
